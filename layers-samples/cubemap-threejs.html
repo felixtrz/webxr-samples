@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+      three.js webgl - materials - cube reflection / refraction [Walt]
+    </title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <script type="module">
+      import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js";
+      import { OrbitControls } from '../js/orbitcontrols.js';
+      let container;
+
+      let camera, scene, renderer;
+
+      let pointLight;
+
+      init();
+      animate();
+
+      function init() {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+
+        camera = new THREE.PerspectiveCamera(
+          50,
+          window.innerWidth / window.innerHeight,
+          1,
+          5000
+        );
+        camera.position.z = 2000;
+
+        //cubemap
+        const path = "../media/textures/cubemap/";
+        const format = ".png";
+        const urls = [
+          path + "px_l" + format,
+          path + "nx_l" + format,
+          path + "py_l" + format,
+          path + "ny_l" + format,
+          path + "pz_l" + format,
+          path + "nz_l" + format,
+        ];
+
+        const reflectionCube = new THREE.CubeTextureLoader().load(urls);
+        const refractionCube = new THREE.CubeTextureLoader().load(urls);
+        refractionCube.mapping = THREE.CubeRefractionMapping;
+
+        scene = new THREE.Scene();
+        scene.background = reflectionCube;
+
+        //lights
+        const ambient = new THREE.AmbientLight(0xffffff);
+        scene.add(ambient);
+
+        pointLight = new THREE.PointLight(0xffffff, 2);
+        scene.add(pointLight);
+
+        //renderer
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        //controls
+				const controls = new OrbitControls( camera, renderer.domElement );
+				controls.enableZoom = false;
+				controls.enablePan = false;
+				controls.minPolarAngle = Math.PI / 4;
+				controls.maxPolarAngle = Math.PI / 1.5;
+
+        window.addEventListener("resize", onWindowResize);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        render();
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>
