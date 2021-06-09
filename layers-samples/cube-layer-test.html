@@ -168,6 +168,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let tempCanvas = document.createElement("canvas");
         tempCanvas.width = tempCanvas.height = cubeFaceSize;
         const tempCanvasContext = tempCanvas.getContext('2d');
+        tempCanvasContext.scale(-1, 1);
         // Note that this call to drawImage will not only copy the bytes to the
         // canvas but also could resized the image if our cube face size is
         // smaller than the source image due to GL max texture size.
@@ -177,7 +178,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           0, // top left y coord in source
           textureSourceCubeFaceSize, // x pixel count from source
           textureSourceCubeFaceSize, // y pixel count from source
-          0, // dest x offset in the canvas
+          -tempCanvas.width, // dest x offset in the canvas
           0, // dest y offset in the canvas
           cubeFaceSize, // x pixel count in dest
           cubeFaceSize, // y pixel count in dest
